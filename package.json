@@ -1,0 +1,28 @@
+{
+  "name": "google-pagespeed-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "tslint --fix -c ./config/tslint.json 'src/**/*{.ts,.tsx}' && tsc",
+    "test": "jasmine"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/jasmine": "^3.3.12",
+    "@types/jsonfile": "^5.0.0",
+    "@types/node": "^11.13.0",
+    "jasmine": "^3.3.1",
+    "ts-node": "^8.0.3",
+    "tslint": "^5.15.0",
+    "typescript": "^3.4.1"
+  },
+  "dependencies": {
+    "d": "^1.0.0",
+    "jasmine-ts-console-reporter": "^3.1.1",
+    "jsonfile": "^5.0.0",
+    "node-fetch": "^2.3.0"
+  }
+}

@@ -10,12 +10,26 @@ export class PagespeedApi {
     }
 
     public async runBenchmarkAsync(urls: string[], msBetweenRequests: number = 500): Promise<BenchmarkResult> {
-        const pageSpeedResults: PageSpeedResult[] = [];
-        const benchmarkResult: BenchmarkResult = new BenchmarkResult(pageSpeedResults);
-        const promises: Array<Promise<any>> = urls.map((url) => this.pagespeedApiWrapper.run(url, BenchmarkStrategy.Mobile).then((res) => {
-            pageSpeedResults.push(res);
-        }));
+        const promises: Array<Promise<PageSpeedResult>> = urls.map((url, i) => {
+            const offsetFromStart = msBetweenRequests * i;
+            return this.getDelayedPromise(url, offsetFromStart)
+        });
+        return Promise.all(promises).then((res) => new BenchmarkResult(res));
+    }
 
-        return Promise.all(promises).then(() => benchmarkResult);
+    private getDelayedPromise(url: string, offsetFromStart: number): Promise<PageSpeedResult> {
+        return new Promise<PageSpeedResult>((resolve, reject) => setTimeout(this.createExecutableRequest(url, resolve), offsetFromStart));
+    }
+
+    private createExecutableRequest(url: string, resolve: (value?: PageSpeedResult | PromiseLike<PageSpeedResult>) => void): (...args: any[]) => void {
+        return async () => {
+            console.log('starting ' + url);
+            const result = await this.executeRequest(url);
+            resolve(result);
+        };
+    }
+
+    private executeRequest(url: string) {
+        return this.pagespeedApiWrapper.run(url, BenchmarkStrategy.Mobile);
     }
 }

@@ -13,7 +13,7 @@ export class PagespeedApi {
         const pageSpeedResults: PageSpeedResult[] = [];
         const benchmarkResult: BenchmarkResult = new BenchmarkResult(pageSpeedResults);
         const promises: Array<Promise<any>> = urls.map((url) => this.pagespeedApiWrapper.run(url, BenchmarkStrategy.Mobile).then((res) => {
-            console.log("thehapp"); pageSpeedResults.push(res);
+            pageSpeedResults.push(res);
         }));
 
         return Promise.all(promises).then(() => benchmarkResult);

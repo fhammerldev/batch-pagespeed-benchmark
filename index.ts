@@ -16,5 +16,4 @@ export async function runBenchmarkAsync(urls: string[], msBetweenRequests: numbe
     const api: PagespeedApi = new PagespeedApi(apiWrapper);
     const result: BenchmarkResult = await api.runBenchmarkAsync(urls, msBetweenRequests);
     return result;
-    //history.forEach(x => console.log(`Test performed on ${x.timestamp} had an average performance of ${x.average}`));
 };

@@ -7,7 +7,7 @@ import { BenchmarkResult } from "./src/benchmark-result";
 
 
 
-export async function runBenchmarkAsync(urls: string[], msBetweenRequests: number = 1000, apiKey: string = "") {
+export async function runBenchmarkAsync(urls: string[], msBetweenRequests: number = 2000, apiKey: string = "") {
     // DI right?
     const queryParser: PagespeedQueryParser = new PagespeedQueryParser(apiKey);
     const resultParser: PagespeedResponseParser = new PagespeedResponseParser();

@@ -9,6 +9,7 @@ export class PagespeedApiWrapper {
     public readonly queryParser: PagespeedQueryParser;
     public readonly resultParser: PagespeedResponseParser;
     public readonly httpClient: HttpClient;
+
     constructor(queryParser: PagespeedQueryParser, resultParser: PagespeedResponseParser, httpClient: HttpClient) {
         this.queryParser = queryParser;
         this.resultParser = resultParser;
@@ -16,9 +17,14 @@ export class PagespeedApiWrapper {
     }
 
     public async run(url: string, strategy: BenchmarkStrategy): Promise<PageSpeedResult> {
-        const targetUrl: URL = this.queryParser.parse(url, strategy); // maybe TS method overloading?
-        return this.httpClient.httpGet(targetUrl.toString()).then(async (res) => {
-            return this.resultParser.parse(await res.json());
-        });
+        return this.httpClient.httpGet(this.parseUrl(url, strategy)).then(this.parseResult);
+    }
+
+    private readonly parseResult = async (res: any): Promise<PageSpeedResult> => {
+        return this.resultParser.parse(await res.json());
+    }
+
+    private parseUrl(url: string, strategy: BenchmarkStrategy): string {
+        return this.queryParser.parse(url, strategy).toString();
     }
 }

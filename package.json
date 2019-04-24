@@ -1,12 +1,16 @@
 {
   "name": "batch-pagespeed-benchmark",
-  "version": "0.1.0",
+  "version": "0.1.4",
   "description": "",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
     "build": "tslint --fix -c ./config/tslint.json 'src/**/*{.ts,.tsx}' && tsc",
     "test": "jasmine"
   },
+  "files": [
+    "dist/**/*"
+  ],
+  "types": "dist/index.d.ts",
   "keywords": [],
   "author": "Ferenc Hammerl",
   "license": "ISC",

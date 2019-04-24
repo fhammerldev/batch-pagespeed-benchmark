@@ -7,10 +7,16 @@
     "strict": true,
     "strictNullChecks": false,
     "strictPropertyInitialization": false,
+    "declaration": true,
     "types": [
       "node",
       "jasmine"
     ],
     "esModuleInterop": true
-  }
+  },
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/spec/*"
+  ]
 }

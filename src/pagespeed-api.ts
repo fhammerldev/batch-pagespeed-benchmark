@@ -12,7 +12,7 @@ export class PagespeedApi {
     public async runBenchmarkAsync(urls: string[], msBetweenRequests: number = 500): Promise<BenchmarkResult> {
         const promises: Array<Promise<PageSpeedResult>> = urls.map((url, i) => {
             const offsetFromStart = msBetweenRequests * i;
-            return this.getDelayedPromise(url, offsetFromStart)
+            return this.getDelayedPromise(url, offsetFromStart);
         });
         return Promise.all(promises).then((res) => new BenchmarkResult(res));
     }
@@ -23,7 +23,7 @@ export class PagespeedApi {
 
     private createExecutableRequest(url: string, resolve: (value?: PageSpeedResult | PromiseLike<PageSpeedResult>) => void): (...args: any[]) => void {
         return async () => {
-            console.log('starting ' + url);
+            console.log("starting " + url);
             const result = await this.executeRequest(url);
             resolve(result);
         };

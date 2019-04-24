@@ -1,6 +1,6 @@
 {
   "name": "batch-pagespeed-benchmark",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
@@ -8,7 +8,8 @@
     "test": "jasmine"
   },
   "files": [
-    "dist/**/*"
+    "dist/*",
+    "dist/src/*"
   ],
   "types": "dist/index.d.ts",
   "keywords": [],

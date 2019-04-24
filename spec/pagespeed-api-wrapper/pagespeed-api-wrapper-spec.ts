@@ -6,7 +6,7 @@ import { URL } from "url";
 describe("PagespeedApiWrapper", () => {
     it("should have an awaitable method run() that returns an object", async () => {
         const pagespeedApiWrapper: PagespeedApiWrapper = new PagespeedApiWrapper(
-            { parse: () => { return new URL("https://fake.com"); } } as PagespeedQueryParser,
+            { parse: () => { return "https://fake.com"; } } as PagespeedQueryParser,
             { parse: () => { return {} as PageSpeedResult; } },
             {
                 httpGet: async () => {
@@ -22,7 +22,7 @@ describe("PagespeedApiWrapper", () => {
     it("should return the object parsed by PageSpeedResultParser ", async () => {
         const mockResult = new PageSpeedResult(null, null, null);
         const pagespeedApiWrapper: PagespeedApiWrapper = new PagespeedApiWrapper(
-            { parse: () => { return new URL("https://fake.com"); } } as PagespeedQueryParser,
+            { parse: () => { return "https://fake.com"; } } as PagespeedQueryParser,
             { parse: () => { return mockResult; } },
             {
                 httpGet: async () => {

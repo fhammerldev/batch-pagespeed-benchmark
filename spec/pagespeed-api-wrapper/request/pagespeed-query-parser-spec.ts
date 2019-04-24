@@ -11,8 +11,8 @@ describe("PagespeedApiWrapper", () => {
     it("should return a formatted query with the url and the strategy as the params", () => {
         const pagespeedApiWrapper: PagespeedQueryParser = new PagespeedQueryParser();
         const url: string = "https://google.com";
-        const result: URL = pagespeedApiWrapper.parse(url, BenchmarkStrategy.Mobile);
-        expect(result.toString())
+        const result: string = pagespeedApiWrapper.parse(url, BenchmarkStrategy.Mobile);
+        expect(result)
             .toBe("https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=https%3A%2F%2Fgoogle.com&strategy=mobile");
     });
 
@@ -21,8 +21,8 @@ describe("PagespeedApiWrapper", () => {
         const pagespeedApiWrapper: PagespeedQueryParser = new PagespeedQueryParser(apiKey);
         const url: string = "https://google.com";
         const strategy: BenchmarkStrategy = BenchmarkStrategy.Mobile;
-        const result: URL = pagespeedApiWrapper.parse(url, strategy);
-        expect(result.toString())
+        const result: string = pagespeedApiWrapper.parse(url, strategy);
+        expect(result)
             .toBe("https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=https%3A%2F%2Fgoogle.com&strategy=mobile&key=__myapikey__");
     });
 });

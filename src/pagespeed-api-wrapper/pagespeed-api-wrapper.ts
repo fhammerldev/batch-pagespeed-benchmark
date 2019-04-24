@@ -1,4 +1,3 @@
-import { URL } from "url";
 import { HttpClient } from "./http-client";
 import { BenchmarkStrategy } from "./request/benchmark-strategy";
 import { PagespeedQueryParser } from "./request/pagespeed-query-parser";
@@ -25,6 +24,6 @@ export class PagespeedApiWrapper {
     }
 
     private parseUrl(url: string, strategy: BenchmarkStrategy): string {
-        return this.queryParser.parse(url, strategy).toString();
+        return this.queryParser.parse(url, strategy);
     }
 }

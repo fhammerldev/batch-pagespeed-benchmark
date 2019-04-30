@@ -1,5 +1,5 @@
 import { from, interval, of } from "rxjs";
-import { catchError, concatMap, filter, take } from "rxjs/operators";
+import { catchError, concatMap, filter, take, switchMap, delay } from "rxjs/operators";
 import { BenchmarkResult } from "./benchmark-result";
 import { PagespeedApiWrapper } from "./pagespeed-api-wrapper/pagespeed-api-wrapper";
 import { BenchmarkStrategy } from "./pagespeed-api-wrapper/request/benchmark-strategy";
@@ -17,22 +17,25 @@ export class PagespeedApi {
     }
 
     public async runBenchmarkAsync(urls: string[], msBetweenRequests: number = 500): Promise<BenchmarkResult> {
-        const promises: Array<Promise<PageSpeedResult>> = urls.map((url, i) => {
-            const offsetFromStart = msBetweenRequests * i;
-            return this.getDelayedPromise(url, offsetFromStart);
-        });
-        return Promise.all(promises).then((res) => new BenchmarkResult(res));
+        const results: PageSpeedResult[] = [];
+        const benchmarkResult: BenchmarkResult = new BenchmarkResult(results);
+        let promiseResolve:any;
+        this.getRequestTimer(urls).pipe(delay(0)).subscribe(
+            res => results.push(res),
+            () => { },
+            () => { promiseResolve(benchmarkResult); }
+        );
+
+        return new Promise((resolve, reject) => { promiseResolve = resolve; })
     }
 
-    private getDelayedPromise(url: string, offsetFromStart: number): Promise<PageSpeedResult> {
-        return new Promise<PageSpeedResult>((resolve, reject) => setTimeout(this.createExecutableRequest(url, resolve), offsetFromStart));
-    }
 
-    private createExecutableRequest(url: string, resolve: (value?: PageSpeedResult | PromiseLike<PageSpeedResult>) => void): (...args: any[]) => void {
-        return async () => {
-            const result = await this.executeRequest(url);
-            resolve(result);
-        };
+    private getRequestTimer(urls: string[]) {
+        return interval(this.retryInterval)
+            .pipe(
+                take(urls.length),
+                switchMap(i => this.executeRequest(urls[i]))
+            );
     }
 
     private executeRequest(url: string) {

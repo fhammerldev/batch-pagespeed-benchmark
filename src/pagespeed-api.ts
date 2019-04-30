@@ -1,9 +1,16 @@
+import { from, interval, of } from "rxjs";
+import { catchError, concatMap, filter, take } from "rxjs/operators";
 import { BenchmarkResult } from "./benchmark-result";
 import { PagespeedApiWrapper } from "./pagespeed-api-wrapper/pagespeed-api-wrapper";
 import { BenchmarkStrategy } from "./pagespeed-api-wrapper/request/benchmark-strategy";
+import { ErrorPageSpeedResult } from "./pagespeed-api-wrapper/response/error-pagespeed-result";
 import { PageSpeedResult } from "./pagespeed-api-wrapper/response/pagespeed-result";
 export class PagespeedApi {
     public pagespeedApiWrapper: PagespeedApiWrapper;
+
+    private readonly retries = 5;
+
+    private readonly retryInterval = 2000;
 
     constructor(pagespeedApiWrapper: PagespeedApiWrapper) {
         this.pagespeedApiWrapper = pagespeedApiWrapper;
@@ -23,13 +30,21 @@ export class PagespeedApi {
 
     private createExecutableRequest(url: string, resolve: (value?: PageSpeedResult | PromiseLike<PageSpeedResult>) => void): (...args: any[]) => void {
         return async () => {
-            console.log("starting " + url);
             const result = await this.executeRequest(url);
             resolve(result);
         };
     }
 
     private executeRequest(url: string) {
-        return this.pagespeedApiWrapper.run(url, BenchmarkStrategy.Mobile);
+        return interval(this.retryInterval).pipe(
+            take(this.retries),
+            concatMap(() => this.pagespeedApiWrapper.run(url, BenchmarkStrategy.Mobile)),
+            filter((pageSpeedResult, i) => this.isValid(pageSpeedResult, i)),
+            take(1)).toPromise();
+    }
+
+    private isValid(pageSpeedResult: PageSpeedResult, i: number): boolean {
+        const isLast = i == this.retries - 1;
+        return !pageSpeedResult.error || isLast;
     }
 }

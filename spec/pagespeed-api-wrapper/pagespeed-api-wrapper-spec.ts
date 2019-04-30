@@ -2,6 +2,7 @@ import { PagespeedApiWrapper } from "../../src/pagespeed-api-wrapper/pagespeed-a
 import { PageSpeedResult } from "../../src/pagespeed-api-wrapper/response/pagespeed-result";
 import { PagespeedQueryParser } from "../../src/pagespeed-api-wrapper/request/pagespeed-query-parser";
 import { URL } from "url";
+import { from } from "rxjs/internal/observable/from";
 
 describe("PagespeedApiWrapper", () => {
     it("should have an awaitable method run() that returns an object", async () => {
@@ -9,12 +10,12 @@ describe("PagespeedApiWrapper", () => {
             { parse: () => { return "https://fake.com"; } } as PagespeedQueryParser,
             { parse: () => { return {} as PageSpeedResult; } },
             {
-                httpGet: async () => {
-                    return Promise.resolve({ json: () => { return Promise.resolve({}); } });
+                httpGet: () => {
+                    return from(Promise.resolve({ json: () => { return Promise.resolve({}); } }));
                 }
             }
         );
-        const result: PageSpeedResult = await pagespeedApiWrapper.run("", null);
+        const result: PageSpeedResult = await pagespeedApiWrapper.run("", null).toPromise();
         expect(result).toBeDefined();
     });
 
@@ -25,12 +26,12 @@ describe("PagespeedApiWrapper", () => {
             { parse: () => { return "https://fake.com"; } } as PagespeedQueryParser,
             { parse: () => { return mockResult; } },
             {
-                httpGet: async () => {
-                    return Promise.resolve({ json: () => { return Promise.resolve({}); } });
+                httpGet: () => {
+                    return from(Promise.resolve({ json: () => { return Promise.resolve({}); } }));
                 }
             }
         );
-        const result: PageSpeedResult = await pagespeedApiWrapper.run("", null);
+        const result: PageSpeedResult = await pagespeedApiWrapper.run("", null).toPromise();
         expect(result).toBe(mockResult);
     });
 });

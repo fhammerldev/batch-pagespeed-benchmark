@@ -1,20 +1,17 @@
 import { Audit } from "./audit";
+import { ErrorPageSpeedResult } from "./error-pagespeed-result";
 import { PageSpeedResult } from "./pagespeed-result";
 
 export class PagespeedResponseParser {
     public parse(dump: any): PageSpeedResult {
-        const audits: Audit[] = [];
-        if(!dump.lighthouseResult) {
-            console.log("went wrong: ", dump);
-            return new PageSpeedResult(dump.id, [], 0)
-        }
-        const rawAudits: any = dump.lighthouseResult.audits;
-        for (const key in rawAudits) {
-            if (rawAudits.hasOwnProperty(key)) {
-                audits.push(rawAudits[key] as Audit);
-            }
+        if (dump.error) {
+            return new ErrorPageSpeedResult(dump.id, dump.error.message);
         }
 
-        return new PageSpeedResult(dump.id, audits, dump.lighthouseResult.categories.performance.score);
+        const audits: Audit[] = Object.keys(dump.lighthouseResult.audits).map(key => dump.lighthouseResult.audits[key] as Audit);
+        const url: string = dump.id;
+        const performance: number = dump.lighthouseResult.categories.performance.score;
+
+        return new PageSpeedResult(url, audits, performance);
     }
 }
